@@ -1,0 +1,31 @@
+version: "3.0"
+
+services:
+  master:
+    image: "arkhotech/spark-python"
+    hostname: master
+    ports:
+     - 8080:8080 
+    volumes:
+     - ./input:/opt/input
+     - ./spark-env.sh:/opt/spark/conf/spark-env.sh
+     - ./script:/opt/scripts
+     - ./spark.properties:/opt/spark/conf/spark-defaults.conf 
+    networks:
+     - sparknet
+    command: ["/opt/spark/bin/spark-class","org.apache.spark.deploy.master.Master"]
+
+  node:  
+    image: "arkhotech/spark-python"
+    networks:
+     - sparknet  
+    volumes:
+     - ./input:/opt/input
+     - ./spark-env.sh:/opt/spark/conf/spark-env.sh
+     - ./spark.properties:/opt/spark/conf/spark-defaults.conf 
+    depends_on: 
+     - master    
+    command: ["/opt/spark/bin/spark-class","org.apache.spark.deploy.worker.Worker","spark://master:7077"]
+networks:
+   sparknet:
+      driver: bridge  #Cambiar por Overlay si esta en un Swarm
