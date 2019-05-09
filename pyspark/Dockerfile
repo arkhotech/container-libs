@@ -38,6 +38,12 @@ ENV HADOOP_HOME=/opt/hadoop-2.8.3
 
 ENV HADOOP_CLASSPATH=$HADOOP_HOME/share/hadoop/tools/lib
 
+ENV LD_LIBRARY_PATH="/opt/hadoop-2.8.3/lib/native"
+
+ENV HADOOP_CLASSPATH=/opt/hadoop-2.8.3/share/hadoop/tools/lib:$HADOOP_CLASSPATH
+
+ENV SPARK_MASTER_HOST="master"
+
 COPY spark.properties $SPARK_HOME/conf/spark-default.conf
 
 WORKDIR /opt

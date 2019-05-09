@@ -2,13 +2,17 @@ version: "3.0"
 
 services:
   master:
-    image: "arkhotech/spark-python"
+    image: "arkhotech/spark-python:2.1.0"
     hostname: master
     ports:
      - 8080:8080 
+    environment:
+     - SPARK_MASTER_HOST='master'
+     - LD_LIBRARY_PATH='/opt/hadoop-2.8.3/lib/native'
+     - HADOOP_CLASSPATH=/opt/hadoop-2.8.3/share/hadoop/tools/lib:$HADOOP_CLASSPATH
     volumes:
      - ./input:/opt/input
-     - ./spark-env.sh:/opt/spark/conf/spark-env.sh
+#     - ./spark-env.sh:/opt/spark/conf/spark-env.sh
      - ./script:/opt/scripts
      - ./spark.properties:/opt/spark/conf/spark-defaults.conf 
     networks:
@@ -16,12 +20,16 @@ services:
     command: ["/opt/spark/bin/spark-class","org.apache.spark.deploy.master.Master"]
 
   node:  
-    image: "arkhotech/spark-python"
+    image: "arkhotech/spark-python:2.1.0"
     networks:
      - sparknet  
+    environment:
+     - SPARK_MASTER_HOST='master'
+     - LD_LIBRARY_PATH='/opt/hadoop-2.8.3/lib/native'
+     - HADOOP_CLASSPATH=/opt/hadoop-2.8.3/share/hadoop/tools/lib:$HADOOP_CLASSPATH
     volumes:
      - ./input:/opt/input
-     - ./spark-env.sh:/opt/spark/conf/spark-env.sh
+#     - ./spark-env.sh:/opt/spark/conf/spark-env.sh
      - ./spark.properties:/opt/spark/conf/spark-defaults.conf 
     depends_on: 
      - master    
