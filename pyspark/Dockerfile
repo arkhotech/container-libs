@@ -4,28 +4,27 @@ WORKDIR /opt
 
 RUN useradd -d /opt spark
 
-RUN wget https://archive.apache.org/dist/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz 
-
-RUN wget http://archive.apache.org/dist/hadoop/common/hadoop-2.8.3/hadoop-2.8.3.tar.gz 
+RUN wget https://archive.apache.org/dist/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz ;\
+    wget http://archive.apache.org/dist/hadoop/common/hadoop-2.8.3/hadoop-2.8.3.tar.gz 
 
 RUN tar -xvzf spark-2.3.1-bin-hadoop2.7.tgz ; \
     chown -R spark:spark /opt ; \
-    rm spark-2.3.1-bin-hadoop2.7.tgz
-
-RUN gunzip hadoop-2.8.3.tar.gz ;\ 
+    rm spark-2.3.1-bin-hadoop2.7.tgz ;\
+    gunzip hadoop-2.8.3.tar.gz ;\ 
     tar -xvf hadoop-2.8.3.tar ;\ 
     rm hadoop-2.8.3.tar; \
     pip install awscli --upgrade --user ;\
     pip install boto3 ;\
-    chown -R spark:spark /opt/*
+    chown -R spark:spark /opt/* ;\
+    mv /opt/spark-2.3.1-bin-hadoop2.7 /opt/spark
 
-RUN mv /opt/spark-2.3.1-bin-hadoop2.7 /opt/spark
+RUN apt-get update ;\
+    apt-get install -y python python3-pip python3-dev build-essential 
 
-RUN apt-get install -y python python-pip python-dev build-essential 
+#Estas dos lineas deben ir separadas.
+RUN pip3 install --upgrade pip  
 
-RUN pip install --upgrade pip 
-
-RUN pip install pyspark 
+RUN pip3 install pyspark 
      
 USER spark 
 
@@ -38,8 +37,6 @@ ENV PATH=$PATH:$SPARK_HOME/bin
 ENV HADOOP_HOME=/opt/hadoop-2.8.3
 
 ENV HADOOP_CLASSPATH=$HADOOP_HOME/share/hadoop/tools/lib
-
-USER spark
 
 COPY spark.properties $SPARK_HOME/conf/spark-default.conf
 
