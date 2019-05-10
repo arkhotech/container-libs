@@ -1,4 +1,7 @@
 FROM php:7.0.29-fpm
+
+RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+
 RUN apt-get update -y \
   && apt-get install -y \
     libxml2-dev \
